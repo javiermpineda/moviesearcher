@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Streaming Availability Results</title>
+    <style>
+        .result {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <div id="results"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+         const streamingData = {{ data | tojson|safe }};   
+         const targetService = "{{ services }}"; 
+
+
+            const resultsContainer = document.getElementById('results');
+            streamingData.result.forEach(item => {
+                if (item.streamingInfo && item.streamingInfo.ca) {
+                    item.streamingInfo.ca.forEach(streamInfo => {
+                        if (streamInfo.service === targetService) {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.className = 'result';
+                            resultDiv.innerHTML = `
+                                <h2>${item.originalTitle} (${item.firstAirYear})</h2>
+                                <p>Type: ${item.type}</p>
+                                <p>Title: ${item.title}</p>
+                                <p>Year: ${item.year}</p>
+                                <a href="${streamInfo.link}" target="_blank">Watch on ${targetService.toUpperCase()}</a>
+                            `;
+                            resultsContainer.appendChild(resultDiv);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
